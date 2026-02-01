@@ -99,11 +99,30 @@ function buildSkillsBlock(skills: SkillEntry[]): string {
     })
     .join('\n\n');
 
-  const usage = [
-    'When users ask for a task, check if a skill below can help.',
-    'If a skill looks relevant, open its SKILL.md using the filesystem tools before acting.',
-    'Do not use skills that are not listed in <available_skills>.',
-  ].join(' ');
+  const usage = `## CRITICAL: Skills System (HIGHEST PRIORITY)
+
+Before doing ANYTHING else, you MUST check if any skill below matches the user's request.
+
+### When to use skills:
+- User mentions keywords in skill name or description → USE THAT SKILL
+- User wants to browse specific websites or apps → CHECK SKILLS FIRST
+- User asks about news, videos, social media, etc. → SKILLS LIKELY APPLY
+
+### How to invoke a skill:
+1. Call: read_skill({ name: "<skill_name>" })
+2. Read the returned instructions carefully
+3. Follow the instructions EXACTLY (e.g., open specific URLs, run workflows)
+
+### MANDATORY rules:
+- DO NOT use web_search or browser_navigate BEFORE checking skills
+- If a skill's description matches user intent, you MUST call read_skill first
+- Example: User says "看新闻" or "今日新闻" → call read_skill for the news-related skill
+- Example: User says "打开抖音" or "看视频" → call read_skill for 抖音 skill
+
+### Skill matching hints:
+- Match by name: exact match or partial match
+- Match by description keywords: 新闻/news, 抖音/douyin/视频, etc.
+- When in doubt, USE THE SKILL - it's better than generic web search`;
 
   return [
     '<skills_system priority="1">',
@@ -149,6 +168,26 @@ export function findSkillByName(
     skills.find((skill) => path.basename(path.dirname(skill.skillPath)).toLowerCase() === target) ||
     null
   );
+}
+
+/**
+ * Read the full content of a skill's SKILL.md file.
+ * Returns the content with base directory info for resolving bundled resources.
+ */
+export function readSkillContent(
+  options: AgentTARSOptions,
+  workspace: string,
+  skillName: string,
+): { content: string; baseDir: string } | null {
+  const skill = findSkillByName(options, workspace, skillName);
+  if (!skill || !fs.existsSync(skill.skillPath)) {
+    return null;
+  }
+
+  const content = fs.readFileSync(skill.skillPath, 'utf8');
+  const baseDir = path.dirname(skill.skillPath);
+
+  return { content, baseDir };
 }
 
 export function loadSkillsPrompt(options: AgentTARSOptions, workspace: string): string {

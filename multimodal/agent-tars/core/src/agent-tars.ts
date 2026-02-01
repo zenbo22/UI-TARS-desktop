@@ -258,11 +258,12 @@ export class AgentTARS<T extends AgentTARSOptions = AgentTARSOptions> extends MC
   ): string {
     const browserRules = generateBrowserRulesPrompt(options.browser?.control);
     const skillsPrompt = loadSkillsPrompt(options, workspace);
+    // Put skills_system FIRST in prompt for highest priority
     const systemPrompt = [
+      skillsPrompt, // Skills have highest priority - check skills BEFORE other actions
       DEFAULT_SYSTEM_PROMPT,
       browserRules,
       `<environment>\nCurrent Working Directory: ${workspace}\n</environment>`,
-      skillsPrompt,
     ]
       .filter(Boolean)
       .join('\n\n');
