@@ -129,6 +129,32 @@ export interface AgentTARSExperimentalOptions {
 }
 
 /**
+ * Skill loader options (OpenSkills-compatible SKILL.md format)
+ */
+export interface AgentTARSSkillsOptions {
+  /**
+   * Enable skill discovery from local directories.
+   *
+   * @defaultValue true
+   */
+  enabled?: boolean;
+
+  /**
+   * Skill directories relative to workspace.
+   *
+   * @defaultValue ['.agent/skills', '.claude/skills']
+   */
+  directories?: string[];
+
+  /**
+   * Also scan global skill directories under the user's home.
+   *
+   * @defaultValue false
+   */
+  includeGlobal?: boolean;
+}
+
+/**
  * Common options interface for all Agent TARS implementations
  */
 export interface AgentTARSOptions extends MCPAgentOptions {
@@ -168,6 +194,11 @@ export interface AgentTARSOptions extends MCPAgentOptions {
    * Experimental features configuration
    */
   experimental?: AgentTARSExperimentalOptions;
+
+  /**
+   * Skill loader configuration (OpenSkills SKILL.md)
+   */
+  skills?: AgentTARSSkillsOptions;
 
   /**
    * AIO Sandbox endpoint URL for remote execution

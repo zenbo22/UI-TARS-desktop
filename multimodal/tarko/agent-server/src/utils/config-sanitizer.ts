@@ -1,8 +1,85 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import fs from 'fs';
+import os from 'os';
 import path from 'path';
 import { AgentAppConfig } from '../types';
 import { SanitizedAgentOptions, SanitizedTool } from '@tarko/interface';
 import { Tool, AgentModel } from '@tarko/interface';
+
+const DEFAULT_SKILL_DIRS = ['.agent/skills', '.claude/skills'];
+const FRONTMATTER_DELIMITER = '---';
+const MAX_DESCRIPTION_LENGTH = 240;
+
+type SkillSummary = {
+  name: string;
+  description: string;
+  location: 'project' | 'global';
+};
+
+const truncate = (input: string): string => {
+  const trimmed = input.trim().replace(/\s+/g, ' ');
+  if (trimmed.length <= MAX_DESCRIPTION_LENGTH) return trimmed;
+  return `${trimmed.slice(0, MAX_DESCRIPTION_LENGTH - 1)}…`;
+};
+
+const parseFrontmatter = (content: string): Record<string, string> => {
+  const lines = content.split(/\r?\n/);
+  if (lines[0]?.trim() !== FRONTMATTER_DELIMITER) {
+    return {};
+  }
+
+  const result: Record<string, string> = {};
+  for (let i = 1; i < lines.length; i += 1) {
+    const line = lines[i].trim();
+    if (line === FRONTMATTER_DELIMITER) {
+      break;
+    }
+    const match = line.match(/^([a-zA-Z0-9_-]+)\s*:\s*(.+)$/);
+    if (match) {
+      result[match[1]] = match[2];
+    }
+  }
+  return result;
+};
+
+const resolveSkillSummary = (
+  skillDir: string,
+  location: SkillSummary['location'],
+): SkillSummary | null => {
+  const skillFile = path.join(skillDir, 'SKILL.md');
+  if (!fs.existsSync(skillFile)) {
+    return null;
+  }
+
+  const content = fs.readFileSync(skillFile, 'utf8');
+  const frontmatter = parseFrontmatter(content);
+  const fallbackName = path.basename(skillDir);
+  const fallbackDescription = content
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .find((line) => line.length > 0 && line !== FRONTMATTER_DELIMITER);
+
+  return {
+    name: frontmatter.name?.trim() || fallbackName,
+    description: truncate(frontmatter.description || fallbackDescription || 'No description'),
+    location,
+  };
+};
+
+const collectSkillSummaries = (
+  baseDir: string,
+  location: SkillSummary['location'],
+): SkillSummary[] => {
+  if (!fs.existsSync(baseDir)) {
+    return [];
+  }
+
+  return fs
+    .readdirSync(baseDir, { withFileTypes: true })
+    .filter((entry) => entry.isDirectory())
+    .map((entry) => resolveSkillSummary(path.join(baseDir, entry.name), location))
+    .filter((entry): entry is SkillSummary => Boolean(entry));
+};
 
 /**
  * Sanitize agent configuration, hiding sensitive information
@@ -91,6 +168,32 @@ export function sanitizeAgentOptions(options: AgentAppConfig): SanitizedAgentOpt
   if (options.workspace !== undefined) {
     sanitized.workspace = options.workspace;
     sanitized.workspaceName = path.basename(options.workspace);
+  }
+
+  // Skill summaries for UI
+  const skillOptions = (options as any).skills;
+  if (skillOptions?.available && Array.isArray(skillOptions.available)) {
+    sanitized.skills = {
+      available: skillOptions.available.map((skill: any) => ({
+        name: String(skill.name ?? ''),
+        description: String(skill.description ?? ''),
+        location: String(skill.location ?? ''),
+      })),
+    };
+  } else if (skillOptions?.enabled !== false && options.workspace) {
+    const directories: string[] = Array.isArray(skillOptions?.directories)
+      ? skillOptions.directories
+      : DEFAULT_SKILL_DIRS;
+    const projectSkills = directories.flatMap((dir) =>
+      collectSkillSummaries(path.resolve(options.workspace as string, dir), 'project'),
+    );
+    const includeGlobal = !!skillOptions?.includeGlobal;
+    const globalSkills = includeGlobal
+      ? directories.flatMap((dir) => collectSkillSummaries(path.resolve(os.homedir(), dir), 'global'))
+      : [];
+    sanitized.skills = {
+      available: [...projectSkills, ...globalSkills],
+    };
   }
 
   return sanitized;

@@ -28,6 +28,11 @@ export const AGENT_TARS_DEFAULT_OPTIONS: AgentTARSOptions = {
   mcpServers: {},
   maxTokens: 8192,
   enableStreamingToolCallEvents: true,
+  skills: {
+    enabled: true,
+    directories: ['.agent/skills', '.claude/skills'],
+    includeGlobal: false,
+  },
 };
 
 /**

@@ -35,6 +35,17 @@ export interface SanitizedAgentOptions extends Omit<AgentOptions, 'toolCallEngin
    * Sanitized tools without function implementations
    */
   tools?: SanitizedTool[];
+
+  /**
+   * Skill summaries for UI display
+   */
+  skills?: {
+    available?: Array<{
+      name: string;
+      description: string;
+      location: string;
+    }>;
+  };
 }
 
 /**

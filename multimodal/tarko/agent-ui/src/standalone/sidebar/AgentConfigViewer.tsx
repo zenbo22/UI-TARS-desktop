@@ -36,6 +36,9 @@ export const AgentConfigViewer: React.FC<AgentConfigViewerProps> = ({ isOpen, on
     loadConfig();
   }, [loadConfig]);
 
+  const skills = config?.skills?.available ?? [];
+  const hasSkills = skills.length > 0;
+
   return (
     <Dialog open={isOpen} onClose={onClose} maxWidth="lg" fullWidth>
       <DialogPanel className="relative max-h-[85vh] overflow-hidden">
@@ -92,7 +95,45 @@ export const AgentConfigViewer: React.FC<AgentConfigViewerProps> = ({ isOpen, on
               </div>
             </div>
           ) : config && Object.keys(config).length > 0 ? (
-            <JSONViewer data={config} emptyMessage="No configuration available" />
+            <div className="space-y-6">
+              <div className="rounded-lg border border-gray-200 dark:border-gray-700 p-4">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-200">
+                    Available Skills
+                  </h3>
+                  <span className="text-xs text-gray-400 dark:text-gray-500">
+                    {hasSkills ? `${skills.length} total` : 'None'}
+                  </span>
+                </div>
+                {hasSkills ? (
+                  <div className="space-y-2">
+                    {skills.map((skill) => (
+                      <div
+                        key={`${skill.location}-${skill.name}`}
+                        className="flex items-start justify-between gap-4 rounded-md bg-gray-50 dark:bg-gray-800/50 px-3 py-2"
+                      >
+                        <div>
+                          <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                            {skill.name}
+                          </div>
+                          <div className="text-xs text-gray-500 dark:text-gray-400">
+                            {skill.description}
+                          </div>
+                        </div>
+                        <div className="text-xs text-gray-400 dark:text-gray-500">
+                          {skill.location}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-xs text-gray-500 dark:text-gray-400">
+                    No skills found. Add skills under `.agent/skills` or `.claude/skills`.
+                  </div>
+                )}
+              </div>
+              <JSONViewer data={config} emptyMessage="No configuration available" />
+            </div>
           ) : (
             <div className="flex items-center justify-center py-12">
               <div className="text-center">

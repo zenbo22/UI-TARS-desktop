@@ -22,6 +22,7 @@ import { AgentTARSLocalEnvironment, AgentTARSAIOEnvironment } from './environmen
 import { AgentTARSBaseEnvironment } from './environments/base';
 import { ToolLogger } from './utils';
 import { AGENT_TARS_WEBUI_CONFIG } from './webui-config';
+import { loadSkillsPrompt } from './shared/skills-loader';
 
 /**
  * AgentTARS - A multimodal AI agent with browser, filesystem, and search capabilities
@@ -256,7 +257,15 @@ export class AgentTARS<T extends AgentTARSOptions = AgentTARSOptions> extends MC
     userInstructions?: string,
   ): string {
     const browserRules = generateBrowserRulesPrompt(options.browser?.control);
-    const systemPrompt = `${DEFAULT_SYSTEM_PROMPT}\n${browserRules}\n\n<environment>\nCurrent Working Directory: ${workspace}\n</environment>\n`;
+    const skillsPrompt = loadSkillsPrompt(options, workspace);
+    const systemPrompt = [
+      DEFAULT_SYSTEM_PROMPT,
+      browserRules,
+      `<environment>\nCurrent Working Directory: ${workspace}\n</environment>`,
+      skillsPrompt,
+    ]
+      .filter(Boolean)
+      .join('\n\n');
 
     return userInstructions
       ? `${systemPrompt}\n\n---\n\n**User Instructions (Higher Priority):**\n\n${userInstructions}`
