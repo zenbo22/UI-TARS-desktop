@@ -44,6 +44,7 @@ export interface SanitizedAgentOptions extends Omit<AgentOptions, 'toolCallEngin
       name: string;
       description: string;
       location: string;
+      workflowFile?: string;
     }>;
   };
 }

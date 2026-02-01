@@ -1,0 +1,297 @@
+{
+  "extVersion": "1.30.00",
+  "name": "抖音",
+  "icon": "riGlobalLine",
+  "table": [],
+  "version": "1.30.00",
+  "drawflow": {
+    "edges": [
+      {
+        "source": "78fxLMCcpADrtIQREzMsu",
+        "target": "UwSBmVBLo_B_EVxBV9wHO",
+        "targetHandle": "UwSBmVBLo_B_EVxBV9wHO-input-1",
+        "sourceHandle": "78fxLMCcpADrtIQREzMsu-output-1",
+        "id": "OyBGcSNulTeiyO4_C0BDn",
+        "class": "source-78fxLMCcpADrtIQREzMsu-output-1 targte-UwSBmVBLo_B_EVxBV9wHO-input-1"
+      },
+      {
+        "target": "9chO178Mwr-8HzxJyyM5-",
+        "source": "UwSBmVBLo_B_EVxBV9wHO",
+        "targetHandle": "9chO178Mwr-8HzxJyyM5--input-1",
+        "sourceHandle": "UwSBmVBLo_B_EVxBV9wHO-output-1",
+        "id": "_HWM4s-5emCbK2pEEfNrd",
+        "class": "source-UwSBmVBLo_B_EVxBV9wHO-output-1 targte-9chO178Mwr-8HzxJyyM5--input-1"
+      },
+      {
+        "target": "Zux9DXBeDcfJu9W9vSGK1",
+        "source": "9chO178Mwr-8HzxJyyM5-",
+        "targetHandle": "Zux9DXBeDcfJu9W9vSGK1-input-1",
+        "sourceHandle": "9chO178Mwr-8HzxJyyM5--output-1",
+        "id": "njwUpNlAUa_BQ7xFrqgcf",
+        "class": "source-9chO178Mwr-8HzxJyyM5--output-1 targte-Zux9DXBeDcfJu9W9vSGK1-input-1"
+      },
+      {
+        "target": "2Tsz44kseHgJE-si6uyni",
+        "source": "Zux9DXBeDcfJu9W9vSGK1",
+        "targetHandle": "2Tsz44kseHgJE-si6uyni-input-1",
+        "sourceHandle": "Zux9DXBeDcfJu9W9vSGK1-output-1",
+        "id": "RBvrD5gYUJtlhYeBaQFxv",
+        "class": "source-Zux9DXBeDcfJu9W9vSGK1-output-1 targte-2Tsz44kseHgJE-si6uyni-input-1"
+      },
+      {
+        "target": "ylu7jvgnWs4Eu97fVQMrE",
+        "source": "2Tsz44kseHgJE-si6uyni",
+        "targetHandle": "ylu7jvgnWs4Eu97fVQMrE-input-1",
+        "sourceHandle": "2Tsz44kseHgJE-si6uyni-output-1",
+        "id": "an-ST4xImqycKEr_XnF1F",
+        "class": "source-2Tsz44kseHgJE-si6uyni-output-1 targte-ylu7jvgnWs4Eu97fVQMrE-input-1"
+      },
+      {
+        "target": "cAKFk9ot3aYSJlMKClaTk",
+        "source": "ylu7jvgnWs4Eu97fVQMrE",
+        "targetHandle": "cAKFk9ot3aYSJlMKClaTk-input-1",
+        "sourceHandle": "ylu7jvgnWs4Eu97fVQMrE-output-1",
+        "id": "jXYbejrA1Ey_OCfK8r-DP",
+        "class": "source-ylu7jvgnWs4Eu97fVQMrE-output-1 targte-cAKFk9ot3aYSJlMKClaTk-input-1"
+      },
+      {
+        "target": "p2GxPT-LHBBX0kL1HkRSC",
+        "source": "cAKFk9ot3aYSJlMKClaTk",
+        "targetHandle": "p2GxPT-LHBBX0kL1HkRSC-input-1",
+        "sourceHandle": "cAKFk9ot3aYSJlMKClaTk-output-1",
+        "id": "ejYU5XRiAwv78JW41spSz",
+        "class": "source-cAKFk9ot3aYSJlMKClaTk-output-1 targte-p2GxPT-LHBBX0kL1HkRSC-input-1"
+      },
+      {
+        "target": "ZVKJiCLNWZaTF5NBESsdZ",
+        "source": "p2GxPT-LHBBX0kL1HkRSC",
+        "targetHandle": "ZVKJiCLNWZaTF5NBESsdZ-input-1",
+        "sourceHandle": "p2GxPT-LHBBX0kL1HkRSC-output-1",
+        "id": "A3Or_tKNWcS4mvqxZ8Wyw",
+        "class": "source-p2GxPT-LHBBX0kL1HkRSC-output-1 targte-ZVKJiCLNWZaTF5NBESsdZ-input-1"
+      }
+    ],
+    "zoom": 1.3,
+    "nodes": [
+      {
+        "position": {
+          "x": 50,
+          "y": 300
+        },
+        "id": "78fxLMCcpADrtIQREzMsu",
+        "label": "trigger",
+        "type": "BlockBasic",
+        "data": {
+          "disableBlock": false,
+          "description": "",
+          "type": "manual",
+          "interval": 60,
+          "delay": 5,
+          "date": "",
+          "time": "00:00",
+          "url": "",
+          "shortcut": "",
+          "activeInInput": false,
+          "isUrlRegex": false,
+          "days": [],
+          "contextMenuName": "",
+          "contextTypes": [],
+          "parameters": [],
+          "preferParamsInTab": false,
+          "observeElement": {
+            "selector": "",
+            "baseSelector": "",
+            "matchPattern": "",
+            "targetOptions": {
+              "subtree": false,
+              "childList": true,
+              "attributes": false,
+              "attributeFilter": [],
+              "characterData": false
+            },
+            "baseElOptions": {
+              "subtree": false,
+              "childList": true,
+              "attributes": false,
+              "attributeFilter": [],
+              "characterData": false
+            }
+          }
+        }
+      },
+      {
+        "id": "UwSBmVBLo_B_EVxBV9wHO",
+        "label": "new-tab",
+        "type": "BlockBasic",
+        "data": {
+          "disableBlock": false,
+          "description": "",
+          "url": "https://www.douyin.com/jingxuan",
+          "userAgent": "",
+          "active": true,
+          "tabZoom": 1,
+          "inGroup": false,
+          "waitTabLoaded": false,
+          "updatePrevTab": true,
+          "customUserAgent": false
+        },
+        "position": {
+          "y": 300,
+          "x": 320
+        }
+      },
+      {
+        "id": "9chO178Mwr-8HzxJyyM5-",
+        "label": "event-click",
+        "type": "BlockBasic",
+        "data": {
+          "disableBlock": false,
+          "description": "",
+          "findBy": "cssSelector",
+          "waitForSelector": true,
+          "waitSelectorTimeout": 5000,
+          "selector": ".xg-video-container > video",
+          "markEl": false,
+          "multiple": false
+        },
+        "position": {
+          "y": 300,
+          "x": 600
+        }
+      },
+      {
+        "id": "Zux9DXBeDcfJu9W9vSGK1",
+        "label": "event-click",
+        "type": "BlockBasic",
+        "data": {
+          "disableBlock": false,
+          "description": "",
+          "findBy": "cssSelector",
+          "waitForSelector": true,
+          "waitSelectorTimeout": 5000,
+          "selector": "svg.K5XBpXG0",
+          "markEl": false,
+          "multiple": false
+        },
+        "position": {
+          "y": 300,
+          "x": 880
+        }
+      },
+      {
+        "id": "2Tsz44kseHgJE-si6uyni",
+        "label": "event-click",
+        "type": "BlockBasic",
+        "data": {
+          "disableBlock": false,
+          "description": "",
+          "findBy": "cssSelector",
+          "waitForSelector": true,
+          "waitSelectorTimeout": 5000,
+          "selector": ".xg-video-container > video",
+          "markEl": false,
+          "multiple": false
+        },
+        "position": {
+          "y": 300,
+          "x": 1160
+        }
+      },
+      {
+        "id": "ylu7jvgnWs4Eu97fVQMrE",
+        "label": "event-click",
+        "type": "BlockBasic",
+        "data": {
+          "disableBlock": false,
+          "description": "34.4万",
+          "findBy": "cssSelector",
+          "waitForSelector": true,
+          "waitSelectorTimeout": 5000,
+          "selector": ".y_KPHMmU:nth-child(1) > #sliderVideo .KV_gO8oI:nth-child(2)",
+          "markEl": false,
+          "multiple": false
+        },
+        "position": {
+          "y": 300,
+          "x": 1440
+        }
+      },
+      {
+        "id": "cAKFk9ot3aYSJlMKClaTk",
+        "label": "event-click",
+        "type": "BlockBasic",
+        "data": {
+          "disableBlock": false,
+          "description": "",
+          "findBy": "cssSelector",
+          "waitForSelector": true,
+          "waitSelectorTimeout": 5000,
+          "selector": "div.K5AaygDB",
+          "markEl": false,
+          "multiple": false
+        },
+        "position": {
+          "y": 450,
+          "x": 50
+        }
+      },
+      {
+        "id": "p2GxPT-LHBBX0kL1HkRSC",
+        "label": "event-click",
+        "type": "BlockBasic",
+        "data": {
+          "disableBlock": false,
+          "description": "",
+          "findBy": "cssSelector",
+          "waitForSelector": true,
+          "waitSelectorTimeout": 5000,
+          "selector": ".xg-video-container > video",
+          "markEl": false,
+          "multiple": false
+        },
+        "position": {
+          "y": 450,
+          "x": 330
+        }
+      },
+      {
+        "id": "ZVKJiCLNWZaTF5NBESsdZ",
+        "label": "event-click",
+        "type": "BlockBasic",
+        "data": {
+          "disableBlock": false,
+          "description": "",
+          "findBy": "cssSelector",
+          "waitForSelector": true,
+          "waitSelectorTimeout": 5000,
+          "selector": "div.K5AaygDB",
+          "markEl": false,
+          "multiple": false
+        },
+        "position": {
+          "y": 450,
+          "x": 610
+        }
+      }
+    ]
+  },
+  "settings": {
+    "publicId": "",
+    "aipowerToken": "",
+    "blockDelay": 0,
+    "saveLog": true,
+    "debugMode": false,
+    "restartTimes": 3,
+    "notification": true,
+    "execContext": "popup",
+    "reuseLastState": false,
+    "inputAutocomplete": true,
+    "onError": "stop-workflow",
+    "executedBlockOnWeb": false,
+    "insertDefaultColumn": false,
+    "defaultColumnName": "column"
+  },
+  "globalData": "{\n\t\"key\": \"value\"\n}",
+  "description": "",
+  "includedWorkflows": {}
+}

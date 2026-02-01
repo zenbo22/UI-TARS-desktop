@@ -4,8 +4,11 @@
  */
 
 import { Request, Response } from 'express';
+import fs from 'fs';
+import path from 'path';
 import { sanitizeAgentOptions } from '../../utils/config-sanitizer';
 import { getPublicAvailableModels, isModelConfigValid } from '../../utils/model-utils';
+import { findSkillByName } from '../../utils/skills';
 
 export function healthCheck(req: Request, res: Response) {
   res.status(200).json({ status: 'ok' });
@@ -24,6 +27,100 @@ export function getAgentOptions(req: Request, res: Response) {
   const server = req.app.locals.server;
   res.status(200).json({
     options: sanitizeAgentOptions(server.appConfig),
+  });
+}
+
+export function getSkillContent(req: Request, res: Response) {
+  const name = req.query.name as string;
+  if (!name) {
+    return res.status(400).json({ error: 'Skill name is required' });
+  }
+
+  const server = req.app.locals.server;
+  const skill = findSkillByName(server.appConfig, name);
+  if (!skill || !fs.existsSync(skill.skillPath)) {
+    return res.status(404).json({ error: 'Skill not found' });
+  }
+
+  const content = fs.readFileSync(skill.skillPath, 'utf8');
+  res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+  return res.status(200).send(content);
+}
+
+export function downloadSkillWorkflow(req: Request, res: Response) {
+  const name = req.query.name as string;
+  if (!name) {
+    return res.status(400).json({ error: 'Skill name is required' });
+  }
+
+  const server = req.app.locals.server;
+  const skill = findSkillByName(server.appConfig, name);
+  if (!skill || !skill.workflowPath || !fs.existsSync(skill.workflowPath)) {
+    return res.status(404).json({ error: 'Workflow not found' });
+  }
+
+  return res.download(skill.workflowPath, skill.workflowFile || 'workflow.json');
+}
+
+const slugifySkillName = (input: string): string => {
+  const normalized = input
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9\u4e00-\u9fa5-_]+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '');
+  if (normalized) return normalized;
+  return `skill-${Date.now()}`;
+};
+
+export function importSkillWorkflow(req: Request, res: Response) {
+  const { name, workflow } = req.body as { name?: string; workflow?: Record<string, any> };
+
+  if (!name || typeof name !== 'string') {
+    return res.status(400).json({ error: 'Skill name is required' });
+  }
+  if (!workflow || typeof workflow !== 'object') {
+    return res.status(400).json({ error: 'Workflow JSON is required' });
+  }
+
+  const server = req.app.locals.server;
+  const workspace = server.appConfig?.workspace;
+  if (!workspace) {
+    return res.status(400).json({ error: 'Workspace is not configured' });
+  }
+
+  const skillDirName = slugifySkillName(name);
+  const skillDir = path.join(workspace, '.agent', 'skills', skillDirName);
+  const workflowPath = path.join(skillDir, 'workflow.json');
+  const skillPath = path.join(skillDir, 'SKILL.md');
+
+  fs.mkdirSync(skillDir, { recursive: true });
+  fs.writeFileSync(workflowPath, JSON.stringify(workflow, null, 2));
+
+  const description =
+    typeof workflow?.description === 'string' ? workflow.description : '通过 Automa workflow 自动化前端操作';
+  const skillContent = [
+    '---',
+    `name: ${name}`,
+    `description: ${description}`,
+    '---',
+    '',
+    '## 使用说明',
+    '1. 在浏览器扩展 Automa 中导入同目录下的 `workflow.json`。',
+    '2. 点击 Run 运行流程。',
+    '3. 如需登录/验证码，手动完成后继续执行。',
+    '',
+  ].join('\n');
+
+  fs.writeFileSync(skillPath, skillContent);
+
+  return res.status(200).json({
+    skill: {
+      name,
+      description,
+      location: 'project',
+      workflowFile: 'workflow.json',
+    },
   });
 }
 
