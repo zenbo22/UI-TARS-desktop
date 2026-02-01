@@ -19,6 +19,9 @@ export function registerSystemRoutes(app: express.Application): void {
 
   // Agent options endpoint (sanitized)
   app.get('/api/v1/agent/options', systemController.getAgentOptions);
+  app.get('/api/v1/skills/read', systemController.getSkillContent);
+  app.get('/api/v1/skills/workflow', systemController.downloadSkillWorkflow);
+  app.post('/api/v1/skills/import', systemController.importSkillWorkflow);
 
   // Runtime settings endpoints
   app.get('/api/v1/runtime-settings', systemController.getRuntimeSettings);

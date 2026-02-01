@@ -93,6 +93,17 @@ export function sanitizeAgentOptions(options: AgentAppConfig): SanitizedAgentOpt
     sanitized.workspaceName = path.basename(options.workspace);
   }
 
+  const skills = (options as any).skills;
+  if (skills?.available && Array.isArray(skills.available)) {
+    sanitized.skills = {
+      available: skills.available.map((skill: any) => ({
+        name: String(skill.name ?? ''),
+        description: String(skill.description ?? ''),
+        location: String(skill.location ?? ''),
+      })),
+    };
+  }
+
   return sanitized;
 }
 

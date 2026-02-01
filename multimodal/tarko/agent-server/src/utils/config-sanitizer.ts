@@ -3,6 +3,7 @@ import path from 'path';
 import { AgentAppConfig } from '../types';
 import { SanitizedAgentOptions, SanitizedTool } from '@tarko/interface';
 import { Tool, AgentModel } from '@tarko/interface';
+import { listSkillEntries } from './skills';
 
 /**
  * Sanitize agent configuration, hiding sensitive information
@@ -91,6 +92,30 @@ export function sanitizeAgentOptions(options: AgentAppConfig): SanitizedAgentOpt
   if (options.workspace !== undefined) {
     sanitized.workspace = options.workspace;
     sanitized.workspaceName = path.basename(options.workspace);
+  }
+
+  // Skill summaries for UI
+  const skillOptions = (options as any).skills;
+  if (skillOptions?.enabled !== false) {
+    const entries = listSkillEntries(options);
+    if (entries.length > 0 || options.workspace) {
+      sanitized.skills = {
+        available: entries.map((entry) => ({
+          name: entry.name,
+          description: entry.description,
+          location: entry.location,
+          workflowFile: entry.workflowFile,
+        })),
+      };
+    } else if (skillOptions?.available && Array.isArray(skillOptions.available)) {
+      sanitized.skills = {
+        available: skillOptions.available.map((skill: any) => ({
+          name: String(skill.name ?? ''),
+          description: String(skill.description ?? ''),
+          location: String(skill.location ?? ''),
+        })),
+      };
+    }
   }
 
   return sanitized;

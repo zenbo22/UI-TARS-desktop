@@ -19,6 +19,7 @@ import { SearchToolProvider } from './search';
 import { FilesystemToolsManager } from './filesystem';
 import { WorkspacePathResolver } from '../../shared/workspace-path-resolver';
 import { AgentTARSBaseEnvironment } from '../base';
+import { listSkills, readSkillContent } from '../../shared/skills-loader';
 
 // Static imports for MCP modules
 // @ts-expect-error - Default esm asset has some issues
@@ -93,7 +94,65 @@ export class AgentTARSLocalEnvironment extends AgentTARSBaseEnvironment {
       await this.initializeInMemoryMCP(registerToolFn);
     }
 
+    // Initialize skill tools (read_skill)
+    await this.initializeSkillTools(registerToolFn);
+
     // All components are now managed internally by the environment
+  }
+
+  /**
+   * Initialize skill-related tools (read_skill)
+   * This allows the agent to load skill instructions on demand.
+   */
+  private async initializeSkillTools(registerToolFn: (tool: Tool) => void): Promise<void> {
+    const skills = listSkills(this.options, this.workspace);
+    if (skills.length === 0) {
+      this.logger.debug('No skills found, skipping read_skill tool registration');
+      return;
+    }
+
+    this.logger.info(`📚 Registering read_skill tool (${skills.length} skills available)`);
+
+    const readSkillTool = new Tool({
+      id: 'read_skill',
+      description:
+        'Load the full instructions for an available skill. Use this BEFORE performing a task if a skill matches the user intent. Returns the SKILL.md content and base directory for any bundled resources.',
+      parameters: {
+        type: 'object' as const,
+        properties: {
+          name: {
+            type: 'string',
+            description:
+              'The name of the skill to load (from <available_skills>). For example: "findnews", "抖音".',
+          },
+        },
+        required: ['name'],
+      },
+      function: async (args: { name: string }) => {
+        const skillName = args.name?.trim();
+        if (!skillName) {
+          return { error: 'Skill name is required' };
+        }
+
+        const result = readSkillContent(this.options, this.workspace, skillName);
+        if (!result) {
+          const availableNames = skills.map((s) => s.name).join(', ');
+          return {
+            error: `Skill "${skillName}" not found. Available skills: ${availableNames}`,
+          };
+        }
+
+        this.logger.info(`✅ Skill loaded: ${skillName}`);
+        return {
+          skill_name: skillName,
+          base_directory: result.baseDir,
+          instructions: result.content,
+        };
+      },
+    });
+
+    registerToolFn(readSkillTool);
+    this.logger.info('✅ read_skill tool registered');
   }
 
   /**
